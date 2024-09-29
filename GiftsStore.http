@@ -1,0 +1,6 @@
+@GiftsStore_HostAddress = http://localhost:5212
+
+GET {{GiftsStore_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
