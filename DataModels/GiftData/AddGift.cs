@@ -11,17 +11,20 @@ namespace GiftsStore.DataModels.GiftData
         [Required]
         public string? Name { get; set; }
         [Required]
+        public string? MiniDescription { get; set; }
+        [Required]
         public string? Description { get; set; }
         [Required]
         public double Price { get; set; }
-        [Required]
-        public List<FormFile>? Files { get; set; }
+    
+        public List<IFormFile>? Files { get; set; }
 
         public Gift ToGift()
         {
             return new Gift
             {
                 Id = Guid.NewGuid(),
+                MiniDescription = MiniDescription,
                 Name = Name,
                 Description = Description,
                 Price = Price,

@@ -42,7 +42,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepositoryDefault<AddDeliveryCompanies, ViewDeliveryCompanies>, RepDeliveryCompany>();
 builder.Services.AddScoped<IRepositoryAddDeleteGetAll<AddGiftFavorite, ViewGiftFavorite?>, RepGiftFavorite>();
 builder.Services.AddScoped<IRepositoryAddDeleteGetAll<AddStoreFavorite, ViewStoreFavorite?>, RepStoreFavorite>();
-builder.Services.AddScoped<IRepositoryWithRate<AddGift, ViewGift>, RepGift>();
+builder.Services.AddScoped<IRepositoryWithRate<AddGift, ViewGift?>, RepGift>();
 builder.Services.AddScoped<IRepositoryOrder<AddOrder, ViewOrder>, RepOrder>();
 builder.Services.AddScoped<IRepositoryDefault<AddPaymentsDeliveryCompanies, ViewPaymentsDeliveryCompanies>, RepPaymentsDeliveryCompanies>();
 builder.Services.AddScoped<IRepositoryDefault<AddPaymentsStore, ViewPaymentsStore>, RepPaymentssStore>();

@@ -1,5 +1,6 @@
 ﻿using GiftsStore.Data;
 using GiftsStore.DataModels.GiftData;
+using GiftsStore.DataModels.ImageData;
 using GiftsStore.DataModels.StoreData;
 using GiftsStore.Models;
 using GiftsStore.Repository.Data;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace GiftsStore.Repository.Repo
 {
-    public class RepGift : IRepositoryWithRate<AddGift, ViewGift>
+    public class RepGift : IRepositoryWithRate<AddGift, ViewGift?>
     {
         public RepGift(ApplicationDbContext Db) {
             this.Db = Db;
@@ -31,13 +32,22 @@ namespace GiftsStore.Repository.Repo
             catch { throw; }
         }
 
-        public async Task<ViewGift> Create(AddGift element)
+        public async Task<ViewGift?> Create(AddGift element)
         {
             try
             {
                 Gift gift = element.ToGift();
-                gift.Store = await Db.Stores.FindAsync(gift.Store);
+                gift.Store = await Db.Stores.Include(a=>a.Region).Where(a=>a.Id == element.Store).SingleOrDefaultAsync();
+                if(gift.Store == null) { return null; }
                 await Db.Gifts.AddAsync(gift);
+                int i = 0;
+                Images images = new Images();
+                foreach (IFormFile file in element.Files!)
+                {
+                    GiftImages stim = await images.AddGiftImage(file, gift, i == 0);
+                    i++;
+                    await Db.GiftImages.AddAsync(stim);
+                }
                 await Db.SaveChangesAsync();
                 return gift.toViewGift();
             }
@@ -63,15 +73,23 @@ namespace GiftsStore.Repository.Repo
             catch { throw; }
         }
 
-        public async Task<List<ViewGift>> GetAll(dynamic? element)
+        public async Task<List<ViewGift?>> GetAll(dynamic? element)
         {
             try
             {
-                List<Gift> gifts = await SearchAll(element);
-                List<ViewGift> vGigt = new() { };
+                List<Gift> gifts = await SearchAll(Guid.Parse(element));
+                List<ViewGift?> vGigt = new() { };
                 foreach (Gift gift in gifts)
                 {
-                    vGigt.Add(gift.toViewGift());
+                    var Vgift = gift.toViewGift();
+                    List<ViewImage> imgList = new();
+                    var ll = Db.GiftImages.Include(a=>a.Gift).Where(a => a.Gift!.Id == gift.Id).ToList();
+                    foreach (var item in ll)
+                    {
+                        imgList.Add(new() { Type = item.Type, URL = item.URL });
+                    }
+                    Vgift.GiftImages = imgList;
+                    vGigt.Add(Vgift);
                 }
                 return vGigt;
             }
@@ -103,7 +121,7 @@ namespace GiftsStore.Repository.Repo
                     await Db.RateGiftUsers.AddAsync(rateUser);
                     await Db.SaveChangesAsync();
                 }
-                List<RateStoreUser> list = await Db.RateStoreUsers.Include(s => s.Store).Where(a => a.Store!.Id == id).ToListAsync();
+                List<RateGiftUser> list = await Db.RateGiftUsers.Include(s => s.Gift).Where(a => a.Gift!.Id == id).ToListAsync();
                 double r = 0;
                 foreach (var item in list)
                 {

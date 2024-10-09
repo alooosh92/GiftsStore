@@ -45,20 +45,20 @@ namespace GiftsStore.Repository.Data
             }
             catch { throw; }
         }
-        public async Task<StoreImages> AddGiftImage(IFormFile file, Store store, bool isIcon)
+        public async Task<GiftImages> AddGiftImage(IFormFile file, Gift gift, bool isIcon)
         {
             try
             {
                 Guid id = Guid.NewGuid();
                 var name = await AddImage(file, id, false);
-                StoreImages storeImage = new()
+                GiftImages giftImage = new()
                 {
                     Id = id,
-                    Store = store,
+                    Gift = gift,
                     Type = isIcon ? "Icon" : "Image",
                     URL = name,
                 };
-                return storeImage;
+                return giftImage;
             }
             catch { throw; }
         }

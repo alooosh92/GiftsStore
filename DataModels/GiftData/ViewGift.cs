@@ -1,6 +1,7 @@
 ﻿using GiftsStore.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using GiftsStore.DataModels.ImageData;
 
 namespace GiftsStore.DataModels.GiftData
 {
@@ -10,6 +11,8 @@ namespace GiftsStore.DataModels.GiftData
         public Guid Id { get; set; }
         [Required]
         public string? Name { get; set; }
+        [Required]
+        public string? MiniDescription { get; set; }
         [Required]
         public string? Description { get; set; }
         [Required]
@@ -25,7 +28,7 @@ namespace GiftsStore.DataModels.GiftData
         [Required]
         public string? Region { get; set; }
         [Required]
-        public List<GiftImages>? GiftImages { get; set; }
+        public List<ViewImage>? GiftImages { get; set; }
         [Required]
         public bool Enabled { get; set; }
     }

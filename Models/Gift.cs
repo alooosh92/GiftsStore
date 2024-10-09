@@ -13,8 +13,10 @@ namespace GiftsStore.Models
         [Required]
         public string? Name { get; set; }
         [Required]
+        public string? MiniDescription { get; set; }
+        [Required]
         public string? Description { get; set; }
-      [Required]
+        [Required]
         [DefaultValue(0)]
         public double Rate { get; set; }
         [Required]
@@ -29,6 +31,7 @@ namespace GiftsStore.Models
         {
             return new ViewGift
             {
+                 MiniDescription = MiniDescription,
                  Id = Id,
                  Description = Description,
                  Rate = Rate,
