@@ -31,7 +31,6 @@ namespace GiftsStore.DataModels.OrderData
             {
                 Address = Address,
                 CreateDate = DateTime.Now,
-                DeliveryStatus = "NotDelivery",
                 Id = Guid.NewGuid(),
                 Late = Late,
                 DeliveryDate = null,

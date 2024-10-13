@@ -4,15 +4,29 @@ using GiftsStore.DataModels.OrderItem;
 using GiftsStore.Models;
 using GiftsStore.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace GiftsStore.Repository.Repo
 {
-    public class RepOrder : IRepositoryOrder<AddOrder ,ViewOrder>
+    public class RepOrder : IRepositoryOrder<AddOrder, ViewOrder>
     {
         public RepOrder(ApplicationDbContext Db) => this.Db = Db;
 
         public ApplicationDbContext Db { get; }
+
+        public async Task<bool> AppRoval(Guid id)
+        {
+            try
+            {
+                Order? order = await Search(id);
+                if(order == null) { return false; }
+                order.OrderStatus = "AppRoval";
+                order.ApprovalDate = DateTime.Now;
+                Db.Orders.Update(order);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
 
         public async Task<ViewOrder?> Create(AddOrder element)
         {
@@ -62,6 +76,21 @@ namespace GiftsStore.Repository.Repo
             catch { throw; }
         }
 
+        public async Task<bool> Delivered(Guid id)
+        {
+            try
+            {
+                Order? order = await Search(id);
+                if (order == null) { return false; }
+                order.OrderStatus = "Delivered";
+                order.DeliveryDate = DateTime.Now;
+                Db.Orders.Update(order);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
+
         public async Task<ViewOrder?> Get(Guid id)
         {
             try
@@ -102,6 +131,52 @@ namespace GiftsStore.Repository.Repo
             }
             catch { throw; }
         }
+
+        public async Task<bool> Ready(Guid id)
+        {
+            try
+            {
+                Order? order = await Search(id);
+                if (order == null) { return false; }
+                order.OrderStatus = "Ready For Delivery";
+                order.ReadyDate = DateTime.Now;
+                Db.Orders.Update(order);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
+
+        public async Task<bool> Verification(Guid id)
+        {
+            try
+            {
+                Order? order = await Search(id);
+                if (order == null) { return false; }
+                order.OrderStatus = "Verification";
+                order.VerificationDate = DateTime.Now;
+                Db.Orders.Update(order);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
+
+        public async Task<bool> WaitingForDelivery(Guid id)
+        {
+            try
+            {
+                Order? order = await Search(id);
+                if (order == null) { return false; }
+                order.OrderStatus = "Waiting For Delivery";
+                order.WaitingForDeliveryDate = DateTime.Now;
+                Db.Orders.Update(order);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
+
         private async Task<Order?> Search(Guid storeId)
         {
             try
@@ -115,7 +190,7 @@ namespace GiftsStore.Repository.Repo
         {
             try
             {
-                Order? order = await Db.Orders.Include(a => a.DeliveryCompanies!.Region).Include(a => a.Person).Include(a=>a.Store!.Region).Where(a => a.DeliveryStatus == "UnConfirm" && a.Person!.Id == id && a.Store!.Id == storeId).SingleOrDefaultAsync();
+                Order? order = await Db.Orders.Include(a => a.DeliveryCompanies!.Region).Include(a => a.Person).Include(a=>a.Store!.Region).Where(a => a.OrderStatus == "Verification" && a.Person!.Id == id && a.Store!.Id == storeId).SingleOrDefaultAsync();
                 return order;
             }
             catch { throw; }

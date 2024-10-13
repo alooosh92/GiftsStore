@@ -8,13 +8,16 @@ namespace GiftsStore.DataModels.OrderData
     {
         public Guid Id { get; set; }
         public DateTime CreateDate { get; set; }
+        public DateTime? VerificationDate { get; set; }
+        public DateTime? ApprovalDate { get; set; }
+        public DateTime? ReadyDate { get; set; }
+        public DateTime? WaitingForDeliveryDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
         public double Late { get; set; }
         public double Long { get; set; }      
         public string? Notes { get; set; }
-        public string? Address { get; set; }
-        public DateTime? DeliveryDate { get; set; }
+        public string? Address { get; set; }        
         public string? OrderStatus { get; set; }
-        public string? DeliveryStatus { get; set; }
         public List<ViewOrderItem>? Items { get; set; }
         public string? FromName { get; set; }
         public string? FromPhone { get; set; }

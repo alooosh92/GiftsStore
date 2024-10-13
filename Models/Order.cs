@@ -12,6 +12,16 @@ namespace GiftsStore.Models
         [Required]
         public DateTime CreateDate { get; set; }
         [Required]
+        public DateTime? VerificationDate { get; set; }
+        [Required]
+        public DateTime? ApprovalDate { get; set; }
+        [Required]
+        public DateTime? ReadyDate { get; set; }
+        [Required]
+        public DateTime? WaitingForDeliveryDate { get; set; }
+        [Required]
+        public DateTime? DeliveryDate { get; set; }
+        [Required]
         public double Late { get; set; }
         [Required]
         public double Long { get; set; }
@@ -25,13 +35,9 @@ namespace GiftsStore.Models
         [Required]
         public string? Address { get; set; }
         [Required] 
-        public DeliveryCompanies? DeliveryCompanies { get; set; }
-        [Required] 
-        public DateTime? DeliveryDate { get; set; }
+        public DeliveryCompanies? DeliveryCompanies { get; set; }       
         [Required]
         public string? OrderStatus { get; set; }
-        [Required]
-        public string? DeliveryStatus { get; set; }
         [Required]
         public Store? Store { get; set; } 
 
@@ -44,7 +50,6 @@ namespace GiftsStore.Models
                 CreateDate = CreateDate,
                 DeliveryCompanyName = DeliveryCompanies!.Name,
                 DeliveryDate = DeliveryDate,
-                DeliveryStatus = DeliveryStatus,
                 Late = Late,
                 Long = Long,
                 Notes = Notes,
@@ -57,6 +62,10 @@ namespace GiftsStore.Models
                 IdStore = Store!.Id,
                 Region = Store.Region!.Name,
                 StoreName = Store.Name,
+                ApprovalDate = ApprovalDate,
+                ReadyDate = ReadyDate,
+                VerificationDate = VerificationDate,
+                WaitingForDeliveryDate = WaitingForDeliveryDate,
             };
         }
     }

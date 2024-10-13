@@ -9,6 +9,15 @@
         public Task<View?> Get(Guid id);
 
         public Task<List<View>> GetAll(string id);
+       
+        public Task<bool> Verification(Guid id);
 
+        public Task<bool> AppRoval(Guid id);
+
+        public Task<bool> Ready(Guid id);
+
+        public Task<bool> WaitingForDelivery(Guid id); 
+        
+        public Task<bool> Delivered(Guid id);
     }
 }
