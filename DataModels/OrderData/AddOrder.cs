@@ -20,9 +20,6 @@ namespace GiftsStore.DataModels.OrderData
         public string? Notes { get; set; }
         [Required]
         public string? Address { get; set; }
-        public List<Guid>? OrderItems { get; set; }
-        [Required]
-        public Guid DeliveryCompanies { get; set; }
         [Required]
         public Guid Store { get; set; }
         public Order ToOrder()
@@ -38,10 +35,14 @@ namespace GiftsStore.DataModels.OrderData
                 Notes = Notes,
                 ToName = Name,
                 ToPhone = Phone,
-                DeliveryCompanies = new DeliveryCompanies { Id = DeliveryCompanies },
+                DeliveryCompanies = null,
                 Person = new Person { Id = Person! },
                 OrderStatus = "NewCreate",
                 Store = new Store { Id = Store },
+                ApprovalDate = null,
+                WaitingForDeliveryDate = null,
+                VerificationDate = null,
+                ReadyDate = null
             };
         }
     }

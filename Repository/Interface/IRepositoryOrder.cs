@@ -1,6 +1,6 @@
 ﻿namespace GiftsStore.Repository.Interface
 {
-    public interface IRepositoryOrder<Add, View>
+    public interface IRepositoryOrder<Add, View, AddItem,UpdateItem>
     {
         public Task<View?> Create(Add element);
 
@@ -19,5 +19,11 @@
         public Task<bool> WaitingForDelivery(Guid id); 
         
         public Task<bool> Delivered(Guid id);
+
+        public Task<bool> AddItemToOrder(AddItem element);
+
+        public Task<bool> DeleteItemFromOrder(Guid id);
+
+        public Task<bool> UpdateItemInOrder(Guid id, int num);
     }
 }

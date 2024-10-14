@@ -7,11 +7,32 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GiftsStore.Repository.Repo
 {
-    public class RepOrder : IRepositoryOrder<AddOrder, ViewOrder>
+    public class RepOrder : IRepositoryOrder<AddOrder, ViewOrder,AddItem, ViewOrderItem>
     {
         public RepOrder(ApplicationDbContext Db) => this.Db = Db;
 
         public ApplicationDbContext Db { get; }
+
+        public async Task<bool> AddItemToOrder(AddItem element)
+        {
+            try
+            {
+                Order? order = await Search(element.OrderId);                
+                Gift? gift = await Db.Gifts.FindAsync(element.GiftId);
+                if (order == null || gift == null) { return false; }
+                OrderItems orderItems = new() 
+                { 
+                    Id = Guid.NewGuid(),
+                    Gift = gift,
+                    Order = order,
+                    Number = element.Number
+                };
+                Db.OrderItems.Add(orderItems);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
 
         public async Task<bool> AppRoval(Guid id)
         {
@@ -40,8 +61,8 @@ namespace GiftsStore.Repository.Repo
                     order.Person = await Db.Users.FindAsync(element.Person);
                     await Db.Orders.AddAsync(order);
                 }
-                List<ViewOrderItem> orderItems = new() { };
-                foreach (var item in element.OrderItems!)
+               // List<ViewOrderItem> orderItems = new() { };
+               /* foreach (var item in element.OrderItems!)
                 {
                     OrderItems items = new()
                     {
@@ -51,10 +72,10 @@ namespace GiftsStore.Repository.Repo
                     };
                     Db.OrderItems.Add(items);
                     orderItems.Add(items.ToViewOrderItem());
-                }
+                }*/
                 await Db.SaveChangesAsync();
                 ViewOrder o = order.ToViewOrder();
-                o.Items = orderItems;
+                o.Items = new() { };
                 return o;
             }
             catch { throw; }
@@ -70,6 +91,19 @@ namespace GiftsStore.Repository.Repo
                 Db.OrderItems.Remove(item);
                 items.Remove(item);
                 if(items.Count == 0) { Db.Orders.Remove(item.Order!); }
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
+
+        public async Task<bool> DeleteItemFromOrder(Guid id)
+        {
+            try
+            {
+                OrderItems? orderItems = await SearchItem(id);
+                if (orderItems == null) { return false; }
+                Db.OrderItems.Remove(orderItems);
                 await Db.SaveChangesAsync();
                 return true;
             }
@@ -98,7 +132,7 @@ namespace GiftsStore.Repository.Repo
                 Order? order = await Search(id);
                 if(order == null) { return null; }
                 ViewOrder? o = order.ToViewOrder();
-                List<OrderItems> items = await SearchItem(order.Id);
+                List<OrderItems> items = await SearchItems(order.Id);
                 List<ViewOrderItem> viewitems = new() { };
                 foreach (var item in items)
                 {
@@ -141,6 +175,20 @@ namespace GiftsStore.Repository.Repo
                 order.OrderStatus = "Ready For Delivery";
                 order.ReadyDate = DateTime.Now;
                 Db.Orders.Update(order);
+                await Db.SaveChangesAsync();
+                return true;
+            }
+            catch { throw; }
+        }
+
+        public async Task<bool> UpdateItemInOrder(Guid id,int num)
+        {
+            try
+            {
+                OrderItems? orderItems = await SearchItem(id);
+                if (orderItems == null) { return false; }
+                orderItems.Number = num;
+                Db.OrderItems.Update(orderItems);
                 await Db.SaveChangesAsync();
                 return true;
             }
@@ -209,7 +257,7 @@ namespace GiftsStore.Repository.Repo
             }
             catch { throw; }
         }
-        private async Task<List<OrderItems>> SearchItem(Guid id)
+        private async Task<List<OrderItems>> SearchItems(Guid id)
         {
             try
             {
@@ -222,6 +270,11 @@ namespace GiftsStore.Repository.Repo
                 return items;
             }
             catch { throw; }
+        }
+        private async Task<OrderItems?> SearchItem(Guid id)
+        {
+            OrderItems? orderItems = await Db.OrderItems.Include(a => a.Order).Include(a => a.Gift).SingleOrDefaultAsync(a => a.Id == id);
+            return orderItems;
         }
 
     }

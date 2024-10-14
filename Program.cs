@@ -5,6 +5,7 @@ using GiftsStore.DataModels.FavoriteData;
 using GiftsStore.DataModels.GiftData;
 using GiftsStore.DataModels.GiftFavoriteData;
 using GiftsStore.DataModels.OrderData;
+using GiftsStore.DataModels.OrderItem;
 using GiftsStore.DataModels.PaymentsDeliveryCompaniesData;
 using GiftsStore.DataModels.PaymentsStoreData;
 using GiftsStore.DataModels.PrivacyAndTerm;
@@ -43,7 +44,7 @@ builder.Services.AddScoped<IRepositoryDefault<AddDeliveryCompanies, ViewDelivery
 builder.Services.AddScoped<IRepositoryAddDeleteGetAll<AddGiftFavorite, ViewGiftFavorite?>, RepGiftFavorite>();
 builder.Services.AddScoped<IRepositoryAddDeleteGetAll<AddStoreFavorite, ViewStoreFavorite?>, RepStoreFavorite>();
 builder.Services.AddScoped<IRepositoryWithRate<AddGift, ViewGift?>, RepGift>();
-builder.Services.AddScoped<IRepositoryOrder<AddOrder, ViewOrder>, RepOrder>();
+builder.Services.AddScoped<IRepositoryOrder<AddOrder, ViewOrder, AddItem, ViewOrderItem>, RepOrder>();
 builder.Services.AddScoped<IRepositoryDefault<AddPaymentsDeliveryCompanies, ViewPaymentsDeliveryCompanies>, RepPaymentsDeliveryCompanies>();
 builder.Services.AddScoped<IRepositoryDefault<AddPaymentsStore, ViewPaymentsStore>, RepPaymentssStore>();
 builder.Services.AddScoped<IRepositoryGetAllActive<Region>, RepRegion>();
