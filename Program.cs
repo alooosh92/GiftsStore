@@ -4,6 +4,7 @@ using GiftsStore.DataModels.DeliveryCompaniesData;
 using GiftsStore.DataModels.FavoriteData;
 using GiftsStore.DataModels.GiftData;
 using GiftsStore.DataModels.GiftFavoriteData;
+using GiftsStore.DataModels.OfferData;
 using GiftsStore.DataModels.OrderData;
 using GiftsStore.DataModels.OrderItem;
 using GiftsStore.DataModels.PaymentsDeliveryCompaniesData;
@@ -51,6 +52,7 @@ builder.Services.AddScoped<IRepositoryGetAllActive<Region>, RepRegion>();
 builder.Services.AddScoped<IRepositoryWithRate<AddStore, ViewStore>, RepStore>();
 builder.Services.AddScoped<IRepositoryPrivacyPolicyAndTerm<PrivacyAndTermsAdd, PrivacyPolicy>, RepPrivacyPolicy>();
 builder.Services.AddScoped<IRepositoryPrivacyPolicyAndTerm<PrivacyAndTermsAdd, TermsOfService>, RepTermsOfServies>();
+builder.Services.AddScoped<IRepositoryOffer<AddOffer,ViewOffer?>,RepOffer>();
 builder.Services.AddScoped<IRepositoryUserNotices<ViewUserNotices>, RepUserNotices>();
 
 Seed.Setting(builder);

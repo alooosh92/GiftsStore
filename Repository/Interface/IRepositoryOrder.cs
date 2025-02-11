@@ -2,14 +2,18 @@
 {
     public interface IRepositoryOrder<Add, View, AddItem,UpdateItem>
     {
-        public Task<View?> Create(Add element);
+        public Task<View?> Create(Add element,string username);
 
         public Task<bool> Delete(Guid id);
 
         public Task<View?> Get(Guid id);
 
         public Task<List<View>> GetAll(string id);
-       
+
+        public Task<Guid?> OpenOrder(string username);
+
+        public Task<int> UnFinishnOrder(string username);
+
         public Task<bool> Verification(Guid id);
 
         public Task<bool> AppRoval(Guid id);

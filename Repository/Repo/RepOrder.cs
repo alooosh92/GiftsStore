@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GiftsStore.Repository.Repo
 {
-    public class RepOrder : IRepositoryOrder<AddOrder, ViewOrder,AddItem, ViewOrderItem>
+    public class RepOrder : IRepositoryOrder<AddOrder, ViewOrder, AddItem, ViewOrderItem>
     {
         public RepOrder(ApplicationDbContext Db) => this.Db = Db;
 
@@ -49,32 +49,17 @@ namespace GiftsStore.Repository.Repo
             catch { throw; }
         }
 
-        public async Task<ViewOrder?> Create(AddOrder element)
+        public async Task<ViewOrder?> Create(AddOrder element,string username)
         {
             try
             {
-                Order? order = await Search(element.Person!, element.Store);
-                if (order == null)
-                {
+                    Order? order;
                     order = element.ToOrder();
                     order.Store = await Db.Stores.FindAsync(element.Store);
-                    order.Person = await Db.Users.FindAsync(element.Person);
+                    order.Person = await Db.Users.SingleOrDefaultAsync(u=>u.PhoneNumber == username);
                     await Db.Orders.AddAsync(order);
-                }
-               // List<ViewOrderItem> orderItems = new() { };
-               /* foreach (var item in element.OrderItems!)
-                {
-                    OrderItems items = new()
-                    {
-                        Gift = await Db.Gifts.FindAsync(item),
-                        Id = Guid.NewGuid(),
-                        Order = order,
-                    };
-                    Db.OrderItems.Add(items);
-                    orderItems.Add(items.ToViewOrderItem());
-                }*/
-                await Db.SaveChangesAsync();
-                ViewOrder o = order.ToViewOrder();
+                    await Db.SaveChangesAsync();              
+                ViewOrder? o = order.ToViewOrder();
                 o.Items = new() { };
                 return o;
             }
@@ -156,10 +141,27 @@ namespace GiftsStore.Repository.Repo
             try
             {
                 List<Order> orders = await SearchAll(id);
-                List<ViewOrder> items = new List<ViewOrder>();
+                List<ViewOrder> items = new List<ViewOrder>();                
                 foreach (var item in orders)
                 {
-                    items.Add(item.ToViewOrder());   
+                    ViewOrder viewOrder = item.ToViewOrder();
+                    List<ViewOrderItem> viewOrderItems = new();
+                    List<OrderItems> orderItems = Db.OrderItems.Include(a=>a.Order).Include(a=>a.Gift).Where(a => a.Order!.Id == item.Id).ToList();
+                    double offers = 0;
+                    foreach (var item1 in orderItems)
+                    {
+                        viewOrderItems.Add(item1.ToViewOrderItem());
+                        Offers? offer = await Db.Offers.Include(a=>a.Gift).Where(a => a.Gift!.Id == item1.Gift!.Id && a.StartDate <= item.CreateDate && a.EndDate >= item.CreateDate).SingleOrDefaultAsync();
+                        if (offer != null)
+                        {
+                            offers +=  offer.Offer;
+                        }
+                    }
+                    var imgStore = await Db.StoreImages.Include(a=>a.Store).SingleOrDefaultAsync(a => a.Store!.Id == viewOrder.IdStore && a.Type == "Icon");               
+                    viewOrder.Url = imgStore?.URL;
+                    viewOrder.Items =viewOrderItems;
+                   viewOrder.Offers = offers;
+                    items.Add(viewOrder);   
                 }
                 return items;
             }
@@ -224,7 +226,33 @@ namespace GiftsStore.Repository.Repo
             }
             catch { throw; }
         }
+        
+        public async Task<Guid?> OpenOrder(string username)
+        {
+            try
+            {
+                var order = await Db.Orders.Include(a => a.Person).SingleOrDefaultAsync(a => a.Person!.PhoneNumber == username && a.OrderStatus == "NewCreate");
+                return order?.Id;
+            }
+            catch
+            {
+                throw;
+            }
+        }
 
+        public async Task<int> UnFinishnOrder(string username)
+        {
+            try
+            {
+                var orders = await SearchAllUnfinish(username);
+                return orders.Count;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        
         private async Task<Order?> Search(Guid storeId)
         {
             try
@@ -238,7 +266,7 @@ namespace GiftsStore.Repository.Repo
         {
             try
             {
-                Order? order = await Db.Orders.Include(a => a.DeliveryCompanies!.Region).Include(a => a.Person).Include(a=>a.Store!.Region).Where(a => a.OrderStatus == "Verification" && a.Person!.Id == id && a.Store!.Id == storeId).SingleOrDefaultAsync();
+                Order? order = await Db.Orders.Include(a => a.DeliveryCompanies!.Region).Include(a => a.Person).Include(a=>a.Store!.Region).Where(a => a.OrderStatus == "NewCreate" && a.Person!.Id == id && a.Store!.Id == storeId).SingleOrDefaultAsync();
                 return order;
             }
             catch { throw; }
@@ -251,7 +279,21 @@ namespace GiftsStore.Repository.Repo
                     .Include(a => a.Store!.Region)
                     .Include(a=>a.DeliveryCompanies)
                     .Include(a=>a.Person)
-                    .Where(a=>a.Person!.Id == id)
+                    .Where(a=>a.Person!.PhoneNumber == id)
+                    .ToListAsync();
+                return list;
+            }
+            catch { throw; }
+        }
+        private async Task<List<Order>> SearchAllUnfinish(string id)
+        {
+            try
+            {
+                List<Order> list = await Db.Orders
+                    .Include(a => a.Store!.Region)
+                    .Include(a => a.DeliveryCompanies)
+                    .Include(a => a.Person)
+                    .Where(a => a.Person!.PhoneNumber == id && a.DeliveryDate == null)
                     .ToListAsync();
                 return list;
             }
@@ -277,5 +319,6 @@ namespace GiftsStore.Repository.Repo
             return orderItems;
         }
 
+        
     }
 }

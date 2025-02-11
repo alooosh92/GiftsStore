@@ -27,5 +27,6 @@ namespace GiftsStore.Data
         public DbSet<RateGiftUser> RateGiftUsers { get; set; }
         public DbSet<RateStoreUser> RateStoreUsers { get; set; }
         public DbSet<UserNotices> UserNotices { get; set; }
+        public DbSet<Offers> Offers { get; set; }
     }
 }

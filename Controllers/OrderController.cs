@@ -1,8 +1,12 @@
 ﻿using GiftsStore.DataModels.OrderData;
 using GiftsStore.DataModels.OrderItem;
+using GiftsStore.Models;
 using GiftsStore.Repository.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Xml.Linq;
 
 namespace GiftsStore.Controllers
@@ -11,17 +15,26 @@ namespace GiftsStore.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        public OrderController(IRepositoryOrder<AddOrder, ViewOrder,AddItem,ViewOrderItem> RepOrder) => this.RepOrder = RepOrder;
+        public OrderController(IRepositoryOrder<AddOrder, ViewOrder, AddItem, ViewOrderItem> RepOrder, UserManager<Person> userManager)
+        {
+            this.RepOrder = RepOrder;
+            UserManager = userManager;
+        }
 
         public IRepositoryOrder<AddOrder, ViewOrder, AddItem, ViewOrderItem> RepOrder { get; }
+        public UserManager<Person> UserManager { get; }
+
         [HttpPost]
         [Route("CreateOrder")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ViewOrder?> Create([FromBody]AddOrder element)
         {
             try
             {
                 if(!ModelState.IsValid) {return null;}
-                return await RepOrder.Create(element);
+                var user = UserManager.GetUserId(User);
+                if (user == null) { return null; }
+                return await RepOrder.Create(element,user);
             }
             catch { throw; }
         }
@@ -49,12 +62,14 @@ namespace GiftsStore.Controllers
         }
         [HttpGet]
         [Route("GetAllOrder")]
-        public async Task<List<ViewOrder>?> GetAll(string id)
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<List<ViewOrder>?> GetAll()
         {
             try
             {
-                if (!ModelState.IsValid) { return null; }
-                return await RepOrder.GetAll(id);
+                var user = UserManager.GetUserId(User);
+                if (user == null) { return null; }
+                return await RepOrder.GetAll(user);
             }
             catch { throw; }
         }
@@ -138,6 +153,34 @@ namespace GiftsStore.Controllers
             {
                 if (!ModelState.IsValid) { return false; }
                 return await RepOrder.UpdateItemInOrder(id, num);
+            }
+            catch { throw; }
+        }
+        [HttpGet]
+        [Route("OpenOrder")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<Guid?> OpenOrder()
+        {
+            try
+            {
+                if (!ModelState.IsValid) { return null; }
+                var user = UserManager.GetUserId(User);
+                if (user == null) { return null; }
+                return await RepOrder.OpenOrder(user);
+            }
+            catch { throw; }
+        }
+        [HttpGet]
+        [Route("UnFinishOrder")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        public async Task<int?> UnFinishOrder()
+        {
+            try
+            {
+                if (!ModelState.IsValid) { return null; }
+                var user = UserManager.GetUserId(User);
+                if (user == null) { return null; }
+                return await RepOrder.UnFinishnOrder(user);
             }
             catch { throw; }
         }

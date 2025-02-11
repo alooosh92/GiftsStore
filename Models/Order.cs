@@ -11,15 +11,10 @@ namespace GiftsStore.Models
         public Person? Person { get; set; }
         [Required]
         public DateTime CreateDate { get; set; }
-        [Required]
         public DateTime? VerificationDate { get; set; }
-        [Required]
         public DateTime? ApprovalDate { get; set; }
-        [Required]
         public DateTime? ReadyDate { get; set; }
-        [Required]
         public DateTime? WaitingForDeliveryDate { get; set; }
-        [Required]
         public DateTime? DeliveryDate { get; set; }
         [Required]
         public double Late { get; set; }
@@ -30,17 +25,14 @@ namespace GiftsStore.Models
         [Required]
         [Phone]
         public string? ToPhone { get; set; }
-        [Required]
         public string? Notes { get; set; }
         [Required]
         public string? Address { get; set; }
-        [Required] 
         public DeliveryCompanies? DeliveryCompanies { get; set; }       
         [Required]
         public string? OrderStatus { get; set; }
-        [Required]
         public Store? Store { get; set; } 
-
+        public double Offers { get; set; }
         public ViewOrder ToViewOrder()
         {
             return new ViewOrder
@@ -48,24 +40,25 @@ namespace GiftsStore.Models
                 Id = Id,
                 Address = Address,
                 CreateDate = CreateDate,
-                DeliveryCompanyName = DeliveryCompanies!.Name,
+                DeliveryCompanyName = DeliveryCompanies?.Name,
                 DeliveryDate = DeliveryDate,
                 Late = Late,
                 Long = Long,
                 Notes = Notes,
                 OrderStatus = OrderStatus,
-                FromName = Person!.FullName,
-                FromPhone = Person.PhoneNumber,
+                FromName = Person?.FullName,
+                FromPhone = Person?.PhoneNumber,
                 ToName = ToName,
                 ToPhone = ToPhone,
                 Items = new () { },
-                IdStore = Store!.Id,
-                Region = Store.Region!.Name,
-                StoreName = Store.Name,
+                IdStore = Store?.Id,
+                Region = Store?.Region?.Name,
+                StoreName = Store?.Name,
                 ApprovalDate = ApprovalDate,
                 ReadyDate = ReadyDate,
-                VerificationDate = VerificationDate,
+                VerificationDate = VerificationDate,                
                 WaitingForDeliveryDate = WaitingForDeliveryDate,
+                Offers = Offers,
             };
         }
     }

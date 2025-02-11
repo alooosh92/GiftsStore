@@ -24,9 +24,10 @@ namespace GiftsStore.DataModels.OrderData
         public string? ToName { get; set; }
         public string? ToPhone { get; set; }
         public string? DeliveryCompanyName { get; set; }
-        public Guid IdStore { get; set; }
+        public Guid? IdStore { get; set; }
         public string? StoreName { get; set; }
         public string? Url {  get; set; }
         public string? Region { get; set; }
+        public double Offers { get; set; }
     }
 }

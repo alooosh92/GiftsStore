@@ -10,13 +10,10 @@ namespace GiftsStore.DataModels.OrderData
         [Required]
         public double Long { get; set; }
         [Required]
-        public string? Person { get; set; }
-        [Required]
         public string? Name { get; set; }
         [Required]
         [Phone]
         public string? Phone { get; set; }
-        [Required]
         public string? Notes { get; set; }
         [Required]
         public string? Address { get; set; }
@@ -30,19 +27,12 @@ namespace GiftsStore.DataModels.OrderData
                 CreateDate = DateTime.Now,
                 Id = Guid.NewGuid(),
                 Late = Late,
-                DeliveryDate = null,
                 Long = Long,
                 Notes = Notes,
                 ToName = Name,
                 ToPhone = Phone,
-                DeliveryCompanies = null,
-                Person = new Person { Id = Person! },
                 OrderStatus = "NewCreate",
                 Store = new Store { Id = Store },
-                ApprovalDate = null,
-                WaitingForDeliveryDate = null,
-                VerificationDate = null,
-                ReadyDate = null
             };
         }
     }

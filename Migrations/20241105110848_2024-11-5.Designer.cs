@@ -4,6 +4,7 @@ using GiftsStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GiftsStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105110848_2024-11-5")]
+    partial class _2024115
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,31 +150,6 @@ namespace GiftsStore.Migrations
                     b.ToTable("GiftImages");
                 });
 
-            modelBuilder.Entity("GiftsStore.Models.Offers", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("GiftId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Offer")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GiftId");
-
-                    b.ToTable("Offers");
-                });
-
             modelBuilder.Entity("GiftsStore.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -202,9 +180,6 @@ namespace GiftsStore.Migrations
 
                     b.Property<string>("Notes")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Offers")
-                        .HasColumnType("float");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
@@ -856,17 +831,6 @@ namespace GiftsStore.Migrations
                 });
 
             modelBuilder.Entity("GiftsStore.Models.GiftImages", b =>
-                {
-                    b.HasOne("GiftsStore.Models.Gift", "Gift")
-                        .WithMany()
-                        .HasForeignKey("GiftId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gift");
-                });
-
-            modelBuilder.Entity("GiftsStore.Models.Offers", b =>
                 {
                     b.HasOne("GiftsStore.Models.Gift", "Gift")
                         .WithMany()

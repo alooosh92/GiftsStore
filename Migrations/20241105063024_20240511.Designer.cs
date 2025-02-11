@@ -4,6 +4,7 @@ using GiftsStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GiftsStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241105063024_20240511")]
+    partial class _20240511
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -147,31 +150,6 @@ namespace GiftsStore.Migrations
                     b.ToTable("GiftImages");
                 });
 
-            modelBuilder.Entity("GiftsStore.Models.Offers", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("GiftId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Offer")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GiftId");
-
-                    b.ToTable("Offers");
-                });
-
             modelBuilder.Entity("GiftsStore.Models.Order", b =>
                 {
                     b.Property<Guid>("Id")
@@ -183,15 +161,17 @@ namespace GiftsStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("ApprovalDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("DeliveryCompaniesId")
+                    b.Property<Guid>("DeliveryCompaniesId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("DeliveryDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<double>("Late")
@@ -201,10 +181,8 @@ namespace GiftsStore.Migrations
                         .HasColumnType("float");
 
                     b.Property<string>("Notes")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Offers")
-                        .HasColumnType("float");
 
                     b.Property<string>("OrderStatus")
                         .IsRequired()
@@ -215,9 +193,10 @@ namespace GiftsStore.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("ReadyDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid?>("StoreId")
+                    b.Property<Guid>("StoreId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ToName")
@@ -229,9 +208,11 @@ namespace GiftsStore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("VerificationDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("WaitingForDeliveryDate")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
@@ -866,22 +847,13 @@ namespace GiftsStore.Migrations
                     b.Navigation("Gift");
                 });
 
-            modelBuilder.Entity("GiftsStore.Models.Offers", b =>
-                {
-                    b.HasOne("GiftsStore.Models.Gift", "Gift")
-                        .WithMany()
-                        .HasForeignKey("GiftId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gift");
-                });
-
             modelBuilder.Entity("GiftsStore.Models.Order", b =>
                 {
                     b.HasOne("GiftsStore.Models.DeliveryCompanies", "DeliveryCompanies")
                         .WithMany()
-                        .HasForeignKey("DeliveryCompaniesId");
+                        .HasForeignKey("DeliveryCompaniesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("GiftsStore.Models.Person", "Person")
                         .WithMany()
@@ -891,7 +863,9 @@ namespace GiftsStore.Migrations
 
                     b.HasOne("GiftsStore.Models.Store", "Store")
                         .WithMany()
-                        .HasForeignKey("StoreId");
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("DeliveryCompanies");
 
