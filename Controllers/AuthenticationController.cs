@@ -196,7 +196,8 @@ namespace GiftsStore
                 FullName = userModel.UserName!,
                 PhoneNumber = userModel.UserName,
                 CreatePinCode = DateTime.Now,
-                PinCode = RandomNumberGenerator.GetInt32(100000, 999999)
+                PinCode = RandomNumberGenerator.GetInt32(100000, 999999),
+                CanComment = true
             };
             var res = await _userManager.CreateAsync(user);
             if (!res.Succeeded) { return false; }

@@ -30,6 +30,7 @@ namespace GiftsStore.Controllers
         }
         [HttpGet]
         [Route("GetStoreOffer")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<List<ViewOffer?>> GetAll(Guid element)
         {
             try

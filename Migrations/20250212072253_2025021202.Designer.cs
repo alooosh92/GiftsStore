@@ -4,6 +4,7 @@ using GiftsStore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GiftsStore.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250212072253_2025021202")]
+    partial class _2025021202
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,6 +34,9 @@ namespace GiftsStore.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("GiftId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PersonId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -38,18 +44,15 @@ namespace GiftsStore.Migrations
                     b.Property<bool>("Report")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("StoreId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("GiftId");
 
-                    b.HasIndex("StoreId");
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Comments");
                 });
@@ -854,21 +857,21 @@ namespace GiftsStore.Migrations
 
             modelBuilder.Entity("GiftsStore.Models.Comment", b =>
                 {
+                    b.HasOne("GiftsStore.Models.Gift", "Gift")
+                        .WithMany()
+                        .HasForeignKey("GiftId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("GiftsStore.Models.Person", "Person")
                         .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GiftsStore.Models.Store", "Store")
-                        .WithMany()
-                        .HasForeignKey("StoreId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Navigation("Gift");
 
                     b.Navigation("Person");
-
-                    b.Navigation("Store");
                 });
 
             modelBuilder.Entity("GiftsStore.Models.DeliveryCompanies", b =>

@@ -1,6 +1,7 @@
 ﻿using GiftsStore.Data;
 using GiftsStore.DataModels.ImageData;
 using GiftsStore.DataModels.OfferData;
+using GiftsStore.DataModels.OrderData;
 using GiftsStore.Models;
 using GiftsStore.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -60,7 +61,13 @@ namespace GiftsStore.Repository.Repo
                 List<Offers> offers = await DB.Offers.Include(a => a.Gift!.Store!.Region).Where(a => a.Gift!.Store!.Id == element && a.EndDate > DateTime.Now).ToListAsync();
                 foreach (var item in offers)
                 {
-                    vOffers.Add(item.ToViewOffer());
+                    ViewOffer viewOffer = item.ToViewOffer();
+                    List<GiftImages> giftImage = await DB.GiftImages.Include(a => a.Gift).Where(a => a.Gift!.Id == viewOffer.GiftId).ToListAsync();
+                    foreach (var img in giftImage)
+                    {
+                        viewOffer.GiftImages!.Add(new ViewImage { Type = img.Type, URL = img.URL });
+                    }
+                    vOffers.Add(viewOffer);
                 }
                 return vOffers;
             }

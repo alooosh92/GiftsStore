@@ -11,5 +11,7 @@ namespace GiftsStore.Models
         // chenge rang to pin code
         public int PinCode {  get; set; }
         public DateTime CreatePinCode { get; set; }
+        public bool? CanComment { get; set; }
+        public string? ReasonForBan { get; set; }
     }
 }
